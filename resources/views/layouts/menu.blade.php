@@ -6,17 +6,6 @@
 
     <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
         @if(Auth::check() && Auth::user()->IsAdmin)
-            <div>
-                <a class="dropdown-item" href="{{route('users.index') }}"
-                   onclick="event.preventDefault();
-                 document.getElementById('users-form').submit();">
-                    {{ __('Users') }}
-                </a>
-
-                <form id="users-form" action="{{ route('users.index') }}" method="GET" class="d-none">
-                    @csrf
-                </form>
-            </div>
 
             <div>
                 <a class="dropdown-item" href="{{route('products.index') }}"
@@ -50,6 +39,18 @@
                 </a>
 
                 <form id="orders-form" action="{{ route('orders.index') }}" method="GET" class="d-none">
+                    @csrf
+                </form>
+            </div>
+
+            <div>
+                <a class="dropdown-item" href="{{route('users.index') }}"
+                   onclick="event.preventDefault();
+                 document.getElementById('users-form').submit();">
+                    {{ __('Users') }}
+                </a>
+
+                <form id="users-form" action="{{ route('users.index') }}" method="GET" class="d-none">
                     @csrf
                 </form>
             </div>

@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="516f116e-b2f1-40a8-a673-a64ae7ed88d2" name="Default Changelist" comment="" />
+    <list default="true" id="516f116e-b2f1-40a8-a673-a64ae7ed88d2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/layouts/menu.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/menu.blade.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +22,9 @@
         <option value="CSS File" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -135,8 +143,9 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/views/orders" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -166,6 +175,7 @@
       <updated>1599031515184</updated>
       <workItem from="1599031517223" duration="14527000" />
       <workItem from="1599121010905" duration="39601000" />
+      <workItem from="1599252377978" duration="2285000" />
     </task>
     <servers />
   </component>
@@ -192,9 +202,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="616" y="240" key="run.anything.popup/0.0.1920.1040/-1857.0.1857.1080@0.0.1920.1040" timestamp="1599209842964" />
-    <state x="654" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1599146519459">
-      <screen x="62" y="0" width="1858" height="1080" />
+    <state x="612" y="226" width="695" height="653" key="search.everywhere.popup" timestamp="1599254110514">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state x="612" y="226" width="695" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1599254110514" />
     <state x="654" y="235" width="672" height="678" key="search.everywhere.popup/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1599146519459" />
   </component>
 </project>
