@@ -1,0 +1,17 @@
+footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+footer .links{
+    display: flex;
+    justify-content: space-evenly;
+    list-style-type: none;
+}
+
+#menu-icon{
+    color: grey;
+}
