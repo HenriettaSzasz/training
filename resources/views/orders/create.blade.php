@@ -2,7 +2,9 @@
 
 @section('content')
     <div class="container">
-        {{ Collective\Html\HtmlFacade::ul($errors->all()) }}
+        @foreach ($errors->all() as $error)
+            <div class="alert alert-danger" role="alert">{{ $error }}</div>
+        @endforeach
 
         <div class="d-flex justify-content-sm-between align-items-sm-center">
             <h1>Add a new category</h1>

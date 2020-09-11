@@ -43,6 +43,9 @@ class LoginController extends Controller
         if(Auth::check() && Auth::user()->IsAdmin == 1){
             return '/admin/products';
         }
+        elseif (Auth::check()){
+            return '/products';
+        }
         return $this->redirectTo;
     }
 }

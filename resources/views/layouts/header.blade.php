@@ -1,14 +1,14 @@
 <header class="test">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
-{{--            <a class="navbar-brand" href="{{ url('/') }}">--}}
-{{--                {{ config('app.name', 'Laravel') }}--}}
-{{--            </a>--}}
-{{--            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"--}}
-{{--                    aria-controls="navbarSupportedContent" aria-expanded="false"--}}
-{{--                    aria-label="{{ __('Toggle navigation') }}">--}}
-{{--                <span class="navbar-toggler-icon"></span>--}}
-{{--            </button>--}}
+            {{--            <a class="navbar-brand" href="{{ url('/') }}">--}}
+            {{--                {{ config('app.name', 'Laravel') }}--}}
+            {{--            </a>--}}
+            {{--            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"--}}
+            {{--                    aria-controls="navbarSupportedContent" aria-expanded="false"--}}
+            {{--                    aria-label="{{ __('Toggle navigation') }}">--}}
+            {{--                <span class="navbar-toggler-icon"></span>--}}
+            {{--            </button>--}}
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Left Side Of Navbar -->
@@ -29,6 +29,12 @@
                             </li>
                         @endif
                     @else
+                        @if(Auth::user()->IsAdmin == 0)
+                            <li class="nav-item h3 mr-2 mt-1">
+                                <a href="{{route('cart')}}" style="cursor: pointer;"><i
+                                        class="text-info fa fa-shopping-cart"></i></a>
+                            </li>
+                        @endif
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -36,6 +42,12 @@
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                @if(Auth::user()->IsAdmin == 0)
+                                    <a class="dropdown-item" href="{{ route('order-history') }}">
+                                        {{ __('Recent orders') }}
+                                    </a>
+                                @endif
+
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

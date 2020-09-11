@@ -5,6 +5,11 @@
     </a>
 
     <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
+        <div>
+            <a class="dropdown-item" href="{{route('home') }}">
+                {{ __('Home') }}
+            </a>
+        </div>
         @if(Auth::check() && Auth::user()->IsAdmin)
 
             <div>
@@ -54,6 +59,14 @@
                     @csrf
                 </form>
             </div>
+        @else
+            @if(Auth::check())
+                <div>
+                    <a class="dropdown-item" href="{{route('products') }}">
+                        {{ __('Products') }}
+                    </a>
+                </div>
+            @endif
         @endif
     </div>
 </li>

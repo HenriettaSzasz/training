@@ -15,9 +15,10 @@ class CreateCategories extends Migration
     {
         if(!Schema::hasTable('categories')){
             Schema::create('categories', function (Blueprint $table) {
-                $table->id();
+                $table->id()->unsigned();
                 $table->string('name');
                 $table->string('briefing');
+                $table->engine = 'InnoDB';
             });
         }
     }

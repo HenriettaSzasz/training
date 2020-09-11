@@ -2,30 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\OrdersDataTable;
+use App\Http\Requests\StoreOrUpdateOrder;
 use App\Orders;
 use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 
 class OrdersController extends Controller
 {
     /**
+     * The orders repository instance.
+     */
+    protected $orders;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param orders $orders
+     */
+    public function __construct(Orders $orders)
+    {
+        $this->orders = $orders;
+    }
+
+    /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function index()
+    public function index(OrdersDataTable $dataTable)
     {
-        $orders = Orders::all();
-
-        return response()
-            ->view('orders.index', ['orders' => $orders]);
+        return $dataTable->render('orders.index');
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -33,7 +47,7 @@ class OrdersController extends Controller
 
         $array = array();
 
-        foreach ($users as $user){
+        foreach ($users as $user) {
             $array[$user['id']] = $user['name'];
         }
 
@@ -44,40 +58,28 @@ class OrdersController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param StoreOrUpdateOrder $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreOrUpdateOrder $request)
     {
-        $rules = array(
-            'details'        => 'required',
-            'user_id'       => 'required',
-        );
-        $validator = Validator::make($request->all(), $rules);
+        $order = new Orders;
+        $order->details = $request->input('details');
+        $order->user_id = $request->user_id;
+        $order->save();
 
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator);
-        } else {
-            // store
-            $order = new Orders;
-            $order->details          = $request->input('details');
-            $order->user_id         = $request->user_id;
-            $order->save();
-
-            return redirect()->route('orders.index');
-        }
+        return redirect()->route('orders.index');
     }
 
     /**
      * Display the specified resource.
      *
      * @param $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
-        $order = Orders::find($id);
+        $order = $this->orders->find($id);
 
         return response()
             ->view('orders.show', ['order' => $order]);
@@ -86,20 +88,20 @@ class OrdersController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Orders  $orders
-     * @return \Illuminate\Http\Response
+     * @param \App\Orders $orders
+     * @return Response
      */
     public function edit($id)
     {
-        $order = Orders::find($id);
+        $order = $this->orders->find($id);
 
-        $users = User::where([['id', '!=', $order->user_id],['isAdmin', '=', 0]])->get();
+        $users = User::where([['id', '!=', $order->user_id], ['isAdmin', '=', 0]])->get();
 
         $array = array();
 
         $array[$order->user->id] = $order->user->name;
 
-        foreach ($users as $user){
+        foreach ($users as $user) {
             $array[$user['id']] = $user['name'];
         }
 
@@ -110,41 +112,29 @@ class OrdersController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreOrUpdateOrder $request
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(StoreOrUpdateOrder $request, $id)
     {
-        $rules = array(
-            'details'        => 'required',
-            'user_id'       => 'required',
-        );
-        $validator = Validator::make($request->all(), $rules);
+        $order = $this->orders->find($id);
+        $order->details = $request->input('details');
+        $order->user_id = $request->user_id;
+        $order->save();
 
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator);
-        } else {
-            // store
-            $order = Orders::find($id);
-            $order->details          = $request->input('details');
-            $order->user_id         = $request->user_id;
-            $order->save();
-
-            return redirect()->route('orders.index');
-        }
+        return redirect()->route('orders.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Orders  $orders
-     * @return \Illuminate\Http\RedirectResponse
+     * @param $id
+     * @return RedirectResponse
      */
     public function destroy($id)
     {
-        $orders = Orders::find($id);
+        $orders = $this->orders->find($id);
 
         $orders->delete();
 

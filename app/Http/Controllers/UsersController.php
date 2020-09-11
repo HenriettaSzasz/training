@@ -2,30 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\UsersDataTable;
+use App\Http\Requests\StoreUser;
+use App\Http\Requests\UpdateUser;
 use App\user;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
     /**
+     * The user repository instance.
+     */
+    protected $users;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param user $users
+     */
+    public function __construct(User $users)
+    {
+        $this->users = $users;
+    }
+
+    /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param UsersDataTable $dataTable
+     * @return Response
      */
-    public function index()
+    public function index(UsersDataTable $dataTable)
     {
-        $users = User::where('isAdmin', '0')->get();
 
-        return response()
-            ->view('users.index', ['users' => $users]);
+        return $dataTable->render('users.index');
     }
+
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -36,49 +53,34 @@ class UsersController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreUser $request)
     {
-        $rules = array(
-            'name'        => 'required',
-            'email'       => 'required|email|unique:users',
-            'password'    => 'required|string',
-        );
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput($request->except('password'));
+        $user = new User;
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
+        if ($request->input('verified') == 1) {
+            $user->markEmailAsVerified();
         } else {
-            // store
-            $user = new User;
-            $user->name          = $request->input('name');
-            $user->email         = $request->input('email');
-            $user->password      = Hash::make($request->input('password'));
-            if($request->input('verified') == 1){
-                $user->markEmailAsVerified();
-            }
-            else{
-                //$user->sendEmailVerificationNotification();
-            }
-            $user->save();
-
-            return redirect()->route('users.index');
+            $user->sendEmailVerificationNotification();
         }
+
+        return redirect()->route('users.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function show($id)
     {
-        $user = User::find($id);
+        $user = $this->users->find($id);
 
         return response()
             ->view('users.show', ['user' => $user]);
@@ -87,12 +89,12 @@ class UsersController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function edit($id)
     {
-        $user = User::find($id);
+        $user = $this->users->find($id);
 
         return response()
             ->view('users.edit', ['user' => $user]);
@@ -101,40 +103,25 @@ class UsersController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param UpdateUser $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUser $request, $id)
     {
-        $rules = array(
-            'name'        => 'required',
-            'email'       => 'required|email',
-            'password'    => 'required|string',
-        );
+        $user = $this->users->find($id);
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
 
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput($request->except('password'));
-        } else {
-            // store
-            $user = User::find($id);
-            $user->name          = $request->input('name');
-            $user->email         = $request->input('email');
-            $user->password      = Hash::make($request->input('password'));
-            $user->save();
-
-            return response()->view('users.show', ['user' => $user]);
-        }
+        return response()->view('users.show', ['user' => $user]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\user  $user
+     * @param \App\user $user
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(user $user)

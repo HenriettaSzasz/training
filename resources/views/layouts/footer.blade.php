@@ -1,5 +1,5 @@
 <footer>
-    <div class="links">
+    <div class="fixed-bottom">
         <a>&copy; Szasz Henrietta</a>
     </div>
 </footer>

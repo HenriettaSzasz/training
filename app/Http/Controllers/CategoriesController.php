@@ -3,29 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\categories;
+use App\DataTables\CategoriesDataTable;
+use App\Http\Requests\StoreOrUpdateCategory;
 use App\Orders;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 class CategoriesController extends Controller
 {
     /**
+     * The categories repository instance.
+     */
+    protected $categories;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param categories $categories
+     */
+    public function __construct(Categories $categories)
+    {
+        $this->categories = $categories;
+    }
+
+    /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function index()
+    public function index(CategoriesDataTable $dataTable)
     {
-        $categories = Categories::all();
-
-        return response()
-            ->view('categories.index', ['categories' => $categories]);
+        return $dataTable
+            ->render('categories.index');
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -36,40 +53,29 @@ class CategoriesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @param StoreOrUpdateCategory $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreOrUpdateCategory $request)
     {
-        $rules = array(
-            'name'        => 'required',
-            'briefing'       => 'required',
-        );
-        $validator = Validator::make($request->all(), $rules);
+        $category = new Categories;
+        $category->name = $request->input('name');
+        $category->briefing = $request->input('briefing');
 
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator);
-        } else {
-            // store
-            $category = new Categories;
-            $category->name          = $request->input('name');
-            $category->briefing         = $request->input('briefing');
-            $category->save();
+        $category->save();
 
-            return redirect()->route('categories.index');
-        }
+        return redirect()->route('categories.index');
     }
 
     /**
      * Display the specified resource.
      *
      * @param $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
-        $category = Categories::find($id);
+        $category = $this->categories->find($id);
 
         return response()
             ->view('categories.show', ['category' => $category]);
@@ -79,11 +85,11 @@ class CategoriesController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
-        $category = Categories::find($id);
+        $category = $this->categories->find($id);
 
         return response()
             ->view('categories.edit', ['category' => $category]);
@@ -92,41 +98,29 @@ class CategoriesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreOrUpdateCategory $request
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return RedirectResponse|Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreOrUpdateCategory $request, $id)
     {
-        $rules = array(
-            'name'        => 'required',
-            'briefing'       => 'required',
-        );
-        $validator = Validator::make($request->all(), $rules);
+        $category = $this->categories->find($id);
+        $category->name = $request->input('name');
+        $category->briefing = $request->input('briefing');
+        $category->save();
 
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator);
-        } else {
-            // store
-            $category = Categories::find($id);
-            $category->name          = $request->input('name');
-            $category->briefing         = $request->input('briefing');
-            $category->save();
-
-            return redirect()->route('categories.index');
-        }
+        return redirect()->route('categories.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function destroy($id)
     {
-        $categories = Categories::find($id);
+        $categories = $this->categories->find($id);
 
         $categories->delete();
 

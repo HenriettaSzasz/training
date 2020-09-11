@@ -15,13 +15,18 @@ class CreateProducts extends Migration
     {
         if(!Schema::hasTable('products')){
             Schema::create('products', function (Blueprint $table) {
-                $table->id();
+                $table->id()->unsigned();
+                $table->string('img')->default("product-dummy.png");
                 $table->string('name');
                 $table->integer('units');
                 $table->double('price');
                 $table->string('description');
-                $table->integer('category_id')->nullable()->default(null);
-                $table->foreign('category_id')->references('id')->on('categories');
+                $table->bigInteger('category_id')->unsigned();
+                $table->engine = 'InnoDB';
+            });
+
+            Schema::table('products', function (Blueprint $table){
+                $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
             });
         }
     }

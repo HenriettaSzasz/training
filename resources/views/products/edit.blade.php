@@ -2,7 +2,9 @@
 
 @section('content')
     <div class="container">
-        {{ Collective\Html\HtmlFacade::ul($errors->all()) }}
+        @foreach ($errors->all() as $error)
+            <div class="alert alert-danger" role="alert">{{ $error }}</div>
+        @endforeach
 
         <div class="d-flex justify-content-sm-between align-items-sm-center">
             <h1>Edit product {{$product->name}}</h1>
@@ -10,6 +12,7 @@
         </div>
 
         {{ Form::model($product, array('route' => array('products.update', $product->id), 'method' => 'PUT')) }}
+        @csrf
 
         <div class="form-group">
             {{ Form::label('name', 'Name') }}

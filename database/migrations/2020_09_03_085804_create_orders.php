@@ -15,10 +15,15 @@ class CreateOrders extends Migration
     {
         if(!Schema::hasTable('orders')){
             Schema::create('orders', function (Blueprint $table) {
-                $table->id();
+                $table->id()->unsigned();
                 $table->string('details');
-                $table->integer('user_id');
-                $table->foreign('user_id')->references('id')->on('users');
+                $table->bigInteger('user_id')->unsigned();
+                $table->double('total')->default(0);
+                $table->engine = 'InnoDB';
+            });
+
+            Schema::table('orders', function (Blueprint $table){
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             });
         }
     }

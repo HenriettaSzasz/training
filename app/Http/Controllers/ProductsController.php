@@ -3,95 +3,91 @@
 namespace App\Http\Controllers;
 
 use App\Categories;
+use App\DataTables\ProductsDataTable;
+use App\Http\Requests\StoreOrUpdateProduct;
 use App\products;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 
 class ProductsController extends Controller
 {
     /**
+     * The products repository instance.
+     */
+    protected $products;
+    protected $categories;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param products $products
+     * @param Categories $categories
+     */
+    public function __construct(Products $products, Categories $categories)
+    {
+        $this->products = $products;
+        $this->categories = $categories;
+    }
+
+    /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param ProductsDataTable $dataTable
+     * @return Response
      */
-    public function index()
+    public function index(ProductsDataTable $dataTable)
     {
-        $products = Products::all();
-        $array = array();
-
-        foreach ($products as $product){
-            $category = Categories::find($product->category_id);
-            $array[$category->id] = $category->name;
-        }
-
-        return response()
-            ->view('products.index', ['products' => $products, 'categories' => $array]);
+        return $dataTable->render('products.index');
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
-        $categories = Categories::select('id', 'name')->get();
+        $categories = $this->categories->all();
         $array = array();
 
-        foreach ($categories as $category){
+        foreach ($categories as $category) {
             $array[$category['id']] = $category['name'];
         }
 
         return response()
-            ->view('products.create',['categories' => $array]);
+            ->view('products.create', ['categories' => $array]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param StoreOrUpdateProduct $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreOrUpdateProduct $request)
     {
-        $rules = array(
-            'name'        => 'required',
-            'units'       => 'required',
-            'price'       => 'required',
-            'description' => 'required',
-            'category_id' => 'required|numeric'
-        );
-        $validator = Validator::make($request->all(), $rules);
+        $product = new Products;
+        $product->name = $request->input('name');
+        $product->units = $request->input('units');
+        $product->price = $request->input('price');
+        $product->description = $request->input('description');
+        $product->category_id = $request->input('category_id');
+        $product->save();
 
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput($request->except('password'));
-        } else {
-            // store
-            $product = new Products;
-            $product->name          = $request->input('name');
-            $product->units         = $request->input('units');
-            $product->price         = $request->input('price');
-            $product->description   = $request->input('description');
-            $product->category_id   = $request->input('category_id');
-            $product->save();
-
-            return redirect()->route('products.index');
-        }
+        return redirect()->route('products.index');
     }
 
     /**
      * Display the specified resource.
      *
      * @param $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
-        $product = Products::where('id', $id)->first();
+        $product = $this->products->where('id', $id)->first();
 
-        $category = Categories::where('id', $product->category_id)->first();
+        $category = $this->categories->where('id', $product->category_id)->first();
 
         return response()
             ->view('products.show', ['product' => $product, 'category' => $category]);
@@ -101,21 +97,19 @@ class ProductsController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
-        $product = Products::where('id', $id)->first();
+        $product = $this->products->where('id', $id)->first();
 
-        $categories = Categories::where('id', '!=', $product->category_id)->get();
-
-        $product_category = Categories::where('id', $product->category_id)->first();
+        $categories = $this->categories->where('id', '!=', $product->category_id)->get();
 
         $array = array();
 
-        $array[$product_category['id']] = $product_category['name'];
+        $array[$product->category->id] =$product->category->name;
 
-        foreach ($categories as $category){
+        foreach ($categories as $category) {
             $array[$category['id']] = $category['name'];
         }
 
@@ -126,48 +120,32 @@ class ProductsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreOrUpdateProduct $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreOrUpdateProduct $request, $id)
     {
-        $rules = array(
-            'name'        => 'required',
-            'units'       => 'required',
-            'price'       => 'required',
-            'description' => 'required',
-            'category_id' => 'required|numeric'
-        );
-        $validator = Validator::make($request->all(), $rules);
+        $product = $this->products->find($id);
+        $product->name = $request->name;
+        $product->units = $request->units;
+        $product->price = $request->price;
+        $product->description = $request->description;
+        $product->category_id = $request->category_id;
+        $product->save();
 
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput($request->except('password'));
-        } else {
-            // store
-            $product = Products::find($id);
-            $product->name          = $request->name;
-            $product->units         = $request->units;
-            $product->price         = $request->price;
-            $product->description   = $request->description;
-            $product->category_id   = $request->category_id;
-            $product->save();
-
-            return response()->view('products.show', ['product' => $product, 'category' => Categories::find($product->category_id)]);
-        }
+        return response()->view('products.show', ['product' => $product, 'category' => $this->categories->find($product->category_id)]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @param int $id
+     * @return RedirectResponse
      */
     public function destroy($id)
     {
-        $product = Products::find($id);
+        $product = $this->products->find($id);
         $product->delete();
         return redirect()->route('products.index');
     }
