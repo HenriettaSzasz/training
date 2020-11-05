@@ -113,7 +113,7 @@
                 <table class="table table-striped table-hover">
                     <thead class="thead-dark">
                     <tr>
-                        <th scope="col" class="text-uppercase">3. Shipping</th>
+                        <th scope="col" class="text-uppercase">3. Shipping address</th>
                     </tr>
                     </thead>
                 </table>
@@ -166,57 +166,38 @@
 
                 <div class="d-block my-3">
                     <div class="custom-control custom-radio">
-                        <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked>
-                        <label class="custom-control-label" for="credit">Cash on delivery</label>
+                        <input id="cash" value="cash" name="paymentMethod" type="radio" class="custom-control-input" required>
+                        <label class="custom-control-label" for="cash">Cash on delivery</label>
                     </div>
                     <div class="custom-control custom-radio">
-                        <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" disabled>
-                        <label class="custom-control-label" for="credit">Credit card</label>
+                        <input id="card" value="card" name="paymentMethod" type="radio" class="custom-control-input" required>
+                        <label class="custom-control-label" for="card">Card</label>
                     </div>
-                    <div class="custom-control custom-radio">
-                        <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" disabled>
-                        <label class="custom-control-label" for="debit">Debit card</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                        <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" disabled>
-                        <label class="custom-control-label" for="paypal">Paypal</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="cc-name">Name on card</label>
-                        <input type="text" class="form-control" id="cc-name" placeholder="" disabled>
-                        <small class="text-muted">Full name as displayed on card</small>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="cc-number">Credit card number</label>
-                        <input type="text" class="form-control" id="cc-number" placeholder="" disabled>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <label for="cc-expiration">Expiration</label>
-                        <input type="text" class="form-control" id="cc-expiration" placeholder="" disabled>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label for="cc-expiration">CVV</label>
-                        <input type="text" class="form-control" id="cc-cvv" placeholder="" disabled>
                     </div>
                 </div>
             </div>
+
+            <div id="checkout-buttons">
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-secondary" onclick="location.href='{{route('products')}}'">Back to shopping
+                    </button>
+                    <button type="submit" class="btn btn-light">Continue<i
+                            class="pl-2 fa fa-angle-double-right"></i></button>
+                </div>
+            </div>
+
             {{Form::close()}}
         @else
             <div class="m-5 d-flex justify-content-center align-items-end">
                 <h3 class="m-5">Your cart is empty</h3>
             </div>
-        @endif
-        <div id="checkout-buttons">
-            <div class="d-flex justify-content-between">
-                <button class="btn btn-secondary" onclick="location.href='{{route('products')}}'">Back to shopping
-                </button>
-                <button class="btn btn-light" onclick="document.getElementById('cart-form').submit(); ">Continue<i class="pl-2 fa fa-angle-double-right"></i></button>
+            <div id="checkout-buttons">
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-secondary" onclick="location.href='{{route('products')}}'">Back to shopping
+                    </button>
+                </div>
             </div>
-        </div>
+        @endif
     </div>
 @endsection
 

@@ -67,8 +67,9 @@ class Cart implements CartInterface
     }
 
     function new($id, $quantity = 1){
+        $product = Products::find($id);
         $cart = session()->pull('cart');
-        array_unshift($cart, ['id' => $id, 'quantity' => $quantity]);
+        array_unshift($cart, ['id' => $id, 'quantity' => $quantity, 'price' => $product->price, 'description'=> $product->description]);
         session()->put('cart', $cart);
     }
 

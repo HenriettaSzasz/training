@@ -10,10 +10,12 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Stripe\PaymentIntent;
+use Stripe\Stripe;
 
 class PlaceOrderController extends Controller
 {
-    public function placeOrder(){
+    public function placeOrder(Request $request){
         if(Cart::isEmpty()){
             return redirect()->route('cart');
         }
@@ -36,12 +38,15 @@ class PlaceOrderController extends Controller
 
         Cart::removeCart();
 
-        view()->share('order',$order);
-        $pdf = PDF::loadView('customer\pdf', $order);
+        $pdf = PDF::loadView('customer\pdf', ['order' => $order]);
 
         Mail::to(Auth::user())->send(new OrderMail($pdf, $order));
 
-        return redirect()->route('products');
+        if($request->paymentMethod === 'cash'){
+            return redirect()->route('products');
+        }
+
+        return redirect()->route('payment', ['id' => $order->id]);
     }
 
     public function orderHistory(){
@@ -63,5 +68,27 @@ class PlaceOrderController extends Controller
         $pdf = PDF::loadView('customer\pdf', $data);
 
         return $pdf->download('order_no' . $id . '.pdf');
+    }
+
+    public function payment($id){
+        Stripe::setApiKey('sk_test_51HRCQqCXwYAEODPJc9gqwh0gPjpeOpVKoEpUgaIO4SAmSuPvyhGaFxLgO6GYWtLJONxJAhd0mHV70QqfXZHMJNwj00qg1zDEB5');
+
+        $order = Orders::find($id);
+
+        $intent = PaymentIntent::create([
+            'amount' => $order->total,
+            'currency' => 'eur',
+        ]);
+
+        return response()->view('customer\payment', ['intent' => $intent, 'id' => $id]);
+    }
+
+    public function confirmPayment($id){
+        $order = Orders::find($id);
+
+        $order->paid = true;
+        $order->save();
+
+        return redirect()->route('products');
     }
 }

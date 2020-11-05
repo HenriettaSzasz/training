@@ -19,6 +19,7 @@ class CreateOrders extends Migration
                 $table->string('details');
                 $table->bigInteger('user_id')->unsigned();
                 $table->double('total')->default(0);
+                $table->boolean('paid')->default(false);
                 $table->engine = 'InnoDB';
             });
 

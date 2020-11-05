@@ -56,7 +56,13 @@ Route::group(['middleware' => array('auth', 'verified')], function (){
     Route::get('order-details/{id}', 'PlaceOrderController@orderDetails')->name('order-details');
 
     Route::get('create-pdf/{id}', 'PlaceOrderController@createPDF')->name('create-pdf');
+
+    Route::get('payment/{id}', 'PlaceOrderController@payment')->name('payment');
+
+    Route::get('confirm-payment/{id}', 'PlaceOrderController@confirmPayment')->name('confirm-payment');
 });
+
+Route::post('/stripe/webhook', 'WebhookController@handleWebhook');
 
 
 

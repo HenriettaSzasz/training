@@ -16,6 +16,7 @@
                 <th>Quantity</th>
                 <th>Price</th>
                 <th>Total price</th>
+                <th>Paid</th>
             </tr>
             </thead>
             <tbody>
@@ -26,6 +27,13 @@
                     <td>{{$order->quantity[$key]->quantity}}</td>
                     <td>{{$item->price}}&euro;</td>
                     <td class="prices">{{$order->quantity[$key]->quantity * $item->price}}&euro;</td>
+                    <td>
+                        @if($order->paid == true)
+                            <input checked disabled type="checkbox">
+                        @else
+                            <input disabled type="checkbox">
+                        @endif
+                    </td>
                 </tr>
             @endforeach
             </tbody>

@@ -4,11 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cart\Cart;
 use App\Categories;
-use App\OrderItems;
-use App\Orders;
 use App\Products;
-use http\Env\Request;
-use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
